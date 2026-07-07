@@ -12,14 +12,16 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Segoe UI","Malgun Gothic",Arial,sans-serif;background:var(--bg);color:var(--ink);}
-  header.app{position:sticky;top:0;z-index:50;background:#2b2b46;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+  header.app{position:sticky;top:0;z-index:50;background:#2b2b46;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 6px rgba(0,0,0,.2);}
   header.app h1{font-size:16px;margin:0;font-weight:600;white-space:nowrap;}
   header.app .spacer{flex:1;}
-  .titlebox{display:flex;align-items:center;gap:8px;flex:1;min-width:220px;}
-  .titlebox input{font-size:15px;font-weight:600;border:none;border-bottom:1px solid #5a5a78;background:transparent;color:#fff;padding:4px 6px;flex:1;min-width:160px;}
+  header.app .sep{width:1px;height:24px;background:#4a4a72;}
+  .titlebox{display:flex;align-items:center;gap:8px;flex:1;min-width:200px;}
+  .titlebox input{font-size:15px;font-weight:600;border:none;border-bottom:1px solid #5a5a78;background:transparent;color:#fff;padding:4px 6px;flex:1;min-width:150px;}
   .titlebox input::placeholder{color:#9a9ab5;}
   button{font-family:inherit;font-size:13px;border:none;border-radius:6px;padding:7px 12px;cursor:pointer;background:#4a4a72;color:#fff;transition:.15s;white-space:nowrap;}
   button:hover{background:#5e5e90;}
+  button:disabled{opacity:.4;cursor:default;}
   button.primary{background:#d24726;} button.primary:hover{background:#e35a39;}
   button.ghost{background:transparent;border:1px solid #5a5a78;}
   button.ghost:hover{background:#3a3a5c;}
@@ -27,6 +29,7 @@
   .toolbar2 label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
   .toolbar2 input[type=number]{width:74px;padding:4px 6px;border:1px solid var(--line);border-radius:5px;font-size:13px;}
   .hint{font-size:12px;color:var(--muted);}
+  .kbd{background:#fff;border:1px solid #c7c7d6;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:11px;font-family:Consolas,monospace;color:#3a3a5c;}
   main{padding:16px;max-width:1500px;margin:0 auto;}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
   .card h2{font-size:14px;margin:0 0 12px;color:#3a3a5c;display:flex;align-items:center;gap:8px;}
@@ -42,16 +45,16 @@
   .gc.no{font-weight:700;}
   .gc.name input,.gc.no input{border:none;background:transparent;width:100%;font-size:12px;font-family:inherit;color:var(--ink);padding:4px 2px;}
   .gc.name input:focus,.gc.no input:focus{outline:2px solid var(--bar2);border-radius:3px;background:#fff;}
+  .gc.rowsel{background:#eef0fb;}
   .gc.track{cursor:crosshair;}
   .gc.track:hover{background:#eef0fb;}
   .gc.q1start{border-left:2px solid #b5b5cc;}
-  .rowdel{cursor:pointer;color:#fff;background:rgba(255,255,255,.18);border-radius:4px;font-size:11px;padding:1px 6px;margin-left:6px;}
-  .rowdel:hover{background:var(--red);}
 
   /* overlay bars */
   .overlay{position:absolute;left:0;top:0;pointer-events:none;}
   .bar{position:absolute;background:linear-gradient(180deg,var(--bar2),var(--bar));border-radius:5px;pointer-events:auto;cursor:grab;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.3);user-select:none;overflow:hidden;}
   .bar:active{cursor:grabbing;}
+  .bar.sel{outline:3px solid #111827;outline-offset:1px;box-shadow:0 0 0 2px #fff,0 2px 8px rgba(0,0,0,.45);z-index:4;}
   .bar .handle{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize;}
   .bar .handle.l{left:0;} .bar .handle.r{right:0;}
   .bar .lbl{padding:0 10px;pointer-events:none;white-space:nowrap;}
@@ -59,29 +62,44 @@
   .milestone .flag{position:absolute;top:-2px;left:3px;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:0 4px 4px 0;white-space:nowrap;}
   .milestone .tri{position:absolute;bottom:-1px;left:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid var(--red);}
 
+  /* COMPANIES */
+  .company-list{display:flex;flex-direction:column;gap:8px;}
+  .company-row{display:flex;align-items:center;gap:10px;}
+  .company-row input[type=color]{width:36px;height:30px;border:1px solid var(--line);border-radius:6px;padding:0;background:none;cursor:pointer;}
+  .company-row input[type=text]{flex:1;max-width:340px;padding:6px 9px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit;}
+  .company-row input[type=text]:focus{outline:2px solid var(--bar2);}
+  .company-row .cnt{font-size:11px;color:var(--muted);}
+  .company-row .cdel{background:#eee;color:#c0392b;font-size:11px;padding:4px 9px;}
+
   /* WORK SCOPE */
   .scope-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media(max-width:900px){.scope-list{grid-template-columns:1fr;}}
-  .scope{border:1px solid var(--line);border-radius:8px;overflow:hidden;}
-  .scope .sh{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f0f0f8;border-bottom:1px solid var(--line);}
+  .scope{border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:default;}
+  .scope.sel{box-shadow:0 0 0 2px var(--bar2);border-color:var(--bar2);}
+  .scope .sh{display:flex;align-items:center;gap:7px;padding:8px 10px;background:#f0f0f8;border-bottom:1px solid var(--line);flex-wrap:wrap;}
   .scope .sh .pno{background:var(--bar);color:#fff;border-radius:5px;font-size:12px;font-weight:700;padding:2px 8px;min-width:24px;text-align:center;}
-  .scope .sh .pname{font-weight:600;font-size:13px;flex:1;}
+  .scope .sh .pname{font-weight:600;font-size:13px;flex:1;min-width:80px;}
   .scope .sh .per{font-size:11px;color:var(--muted);}
+  .scope .sh select{font-size:11px;border:1px solid var(--line);border-radius:5px;padding:3px 4px;max-width:150px;font-family:inherit;background:#fff;}
+  .scope .sh .iconbtn{background:#e2e2ee;color:#3a3a5c;font-size:12px;padding:3px 7px;line-height:1;}
+  .scope .sh .iconbtn:hover{background:#d0d0e2;}
+  .scope .sh .cdel{background:#eee;color:#c0392b;font-size:11px;padding:3px 9px;}
   .scope textarea{width:100%;border:none;min-height:90px;resize:vertical;padding:10px;font-family:inherit;font-size:13px;line-height:1.5;color:var(--ink);}
   .scope textarea:focus{outline:2px solid var(--bar2);outline-offset:-2px;}
-  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px;align-items:center;}
   .legend span{display:flex;align-items:center;gap:6px;}
   .sw{width:16px;height:10px;border-radius:3px;display:inline-block;}
   .footer{text-align:center;color:var(--muted);font-size:12px;padding:20px;}
   @media print{
     *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
     @page{ size:landscape; margin:10mm; }
-    header.app button,.scope .sh button,.toolbar2,.rowdel,.hint,.footer,header.app h1{ display:none !important; }
+    header.app button,.scope .sh button,.scope .sh select,.toolbar2,.hint,header.app h1{ display:none !important; }
     header.app{ position:static; box-shadow:none; background:#fff !important; padding:0 0 8px; }
     .titlebox input{ color:#14243d !important; font-size:20px; border:none; }
     body{ background:#fff; }
     .card{ box-shadow:none; border-color:#ccc; break-inside:avoid; }
     .gantt-scroll{ overflow:visible; }
+    .footer{ display:none; }
   }
 </style>
 </head>
@@ -89,6 +107,9 @@
 <header class="app">
   <h1>📅 Schedule Editor</h1>
   <div class="titlebox"><input id="title" placeholder="Project / Meeting title"></div>
+  <button id="undoBtn" class="ghost" onclick="undo()" title="Undo (Ctrl+Z)">↶ Undo</button>
+  <button id="redoBtn" class="ghost" onclick="redo()" title="Redo (Ctrl+Y)">↷ Redo</button>
+  <span class="sep"></span>
   <button class="ghost" onclick="addPhase()">＋ Add Phase</button>
   <button class="ghost" onclick="saveHTML()">🌐 Save as HTML</button>
   <button class="ghost" onclick="saveJSON()">💾 Save (JSON)</button>
@@ -101,7 +122,7 @@
 <div class="toolbar2">
   <label>Start year <input type="number" id="startYear" min="2000" max="2100" onchange="setYears()"></label>
   <label>Years <input type="number" id="numYears" min="1" max="10" onchange="setYears()"></label>
-  <span class="hint">Drag a bar to move it · Drag the ends to resize · Click an empty cell to create a bar · Double-click a bar to delete · Drag the red dashed line (delivery date) to move it</span>
+  <span class="hint">Click a bar to select · <span class="kbd">Del</span> delete · <span class="kbd">Ctrl</span>+<span class="kbd">Z</span>/<span class="kbd">Y</span> undo/redo · <span class="kbd">Ctrl</span>+<span class="kbd">D</span> duplicate · <span class="kbd">Alt</span>+<span class="kbd">↑</span>/<span class="kbd">↓</span> reorder · drag bar to move, ends to resize</span>
 </div>
 
 <main>
@@ -110,11 +131,13 @@
     <div class="gantt-scroll">
       <div class="gantt" id="gantt"></div>
     </div>
-    <div class="legend">
-      <span><i class="sw" style="background:linear-gradient(180deg,#5A5AD6,#3333CC)"></i> Phase duration</span>
-      <span><i class="sw" style="background:#C00000"></i> Delivery Date</span>
-      <span>Drag = move · Ends = resize · Double-click = delete</span>
-    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="badge">COMPANIES</span> Companies (color coding · 회사별 색상)</h2>
+    <div class="company-list" id="companyList"></div>
+    <button class="ghost" style="margin-top:12px;background:#e6e6f2;color:#3a3a5c" onclick="addCompany()">＋ Add company</button>
   </div>
 
   <div class="card">
@@ -131,6 +154,7 @@
    STATE
 ========================================================= */
 const COLORS = ['#3333CC','#2E8B57','#B8860B','#8E44AD','#C0392B','#16A085','#D35400'];
+const COMPANY_PALETTE = ['#2E86AB','#2A9D8F','#E9A23B','#C0392B','#8E44AD','#16A085','#D35400','#1B3A5B','#B8860B','#2E8B57'];
 function uid(){return 'id'+Math.random().toString(36).slice(2,9);}
 
 function defaultState(){
@@ -139,24 +163,52 @@ function defaultState(){
     startYear: 2026,
     numYears: 4,
     phases: [
-      {id:uid(), no:'0', name:'Pre-Test',                              scope:'', start:2,  end:5,  color:COLORS[0]},
-      {id:uid(), no:'1', name:'Detailed Design',                       scope:'', start:2,  end:7,  color:COLORS[1]},
-      {id:uid(), no:'2', name:'Manufacture of Mock-up',                scope:'', start:5,  end:7,  color:COLORS[2]},
-      {id:uid(), no:'3', name:'EQ Program / Equipment Qualification',  scope:'', start:5,  end:10, color:COLORS[3]},
-      {id:uid(), no:'4', name:'Design for ASME III',                   scope:'', start:7,  end:9,  color:COLORS[4]},
-      {id:uid(), no:'5', name:'Manufacture',                           scope:'', start:7,  end:11, color:COLORS[5]},
-      {id:uid(), no:'6', name:'Software V&V',                          scope:'', start:11, end:15, color:COLORS[6]},
+      {id:uid(), no:'0', name:'Pre-Test',                              scope:'', start:2,  end:5,  color:COLORS[0], company:null},
+      {id:uid(), no:'1', name:'Detailed Design',                       scope:'', start:2,  end:7,  color:COLORS[1], company:null},
+      {id:uid(), no:'2', name:'Manufacture of Mock-up',                scope:'', start:5,  end:7,  color:COLORS[2], company:null},
+      {id:uid(), no:'3', name:'EQ Program / Equipment Qualification',  scope:'', start:5,  end:10, color:COLORS[3], company:null},
+      {id:uid(), no:'4', name:'Design for ASME III',                   scope:'', start:7,  end:9,  color:COLORS[4], company:null},
+      {id:uid(), no:'5', name:'Manufacture',                           scope:'', start:7,  end:11, color:COLORS[5], company:null},
+      {id:uid(), no:'6', name:'Software V&V',                          scope:'', start:11, end:15, color:COLORS[6], company:null},
     ],
     milestones: [
       {id:uid(), label:'Delivery Date', quarter:15, color:'#C00000'},
     ],
+    companies: [],
   };
 }
 let state = defaultState();
+let selId = null;
 
 const LS_KEY = 'scheduleEditor.v1';
 function persist(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
 function restore(){ try{ const s=localStorage.getItem(LS_KEY); if(s){state=JSON.parse(s);} }catch(e){} }
+function migrate(){
+  if(!Array.isArray(state.companies)) state.companies=[];
+  if(!Array.isArray(state.phases)) state.phases=[];
+  if(!Array.isArray(state.milestones)) state.milestones=[];
+  state.phases.forEach(p=>{ if(!p.id)p.id=uid(); if(!('company' in p))p.company=null; if(!('color' in p))p.color=COLORS[0]; });
+}
+
+/* =========================================================
+   UNDO / REDO HISTORY
+========================================================= */
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+let history=[], hi=-1;
+function initHistory(){ history=[clone(state)]; hi=0; updateHistUI(); }
+function commit(){
+  if(hi < history.length-1) history = history.slice(0, hi+1);
+  history.push(clone(state)); hi = history.length-1;
+  if(history.length > 200){ history.shift(); hi--; }
+  persist(); updateHistUI();
+}
+function undo(){ if(hi<=0) return; hi--; state=clone(history[hi]); persist(); renderAll(); updateHistUI(); }
+function redo(){ if(hi>=history.length-1) return; hi++; state=clone(history[hi]); persist(); renderAll(); updateHistUI(); }
+function updateHistUI(){
+  const u=document.getElementById('undoBtn'), r=document.getElementById('redoBtn');
+  if(u) u.disabled = hi<=0;
+  if(r) r.disabled = hi>=history.length-1;
+}
 
 /* =========================================================
    HELPERS
@@ -164,6 +216,9 @@ function restore(){ try{ const s=localStorage.getItem(LS_KEY); if(s){state=JSON.
 function numQ(){ return state.numYears*4; }
 function qLabel(i){ const y=state.startYear+Math.floor(i/4); const q=(i%4)+1; return y+' Q'+q; }
 function clampQ(i){ return Math.max(0, Math.min(numQ()-1, i)); }
+function phaseById(id){ return state.phases.find(p=>p.id===id); }
+function companyById(id){ return state.companies.find(c=>c.id===id); }
+function effColor(p){ if(p.company){ const c=companyById(p.company); if(c) return c.color; } return p.color; }
 
 /* =========================================================
    RENDER GRID
@@ -192,14 +247,16 @@ function renderGrid(){
   }
 
   state.phases.forEach((p)=>{
-    const noc = document.createElement('div'); noc.className='gc no';
+    const noc = document.createElement('div'); noc.className='gc no'; noc.dataset.pid=p.id;
     const ni=document.createElement('input'); ni.value=p.no; ni.style.textAlign='center';
     ni.oninput=()=>{p.no=ni.value; persist(); renderScope();};
-    noc.appendChild(ni); grid.appendChild(noc);
-    const nc=document.createElement('div'); nc.className='gc left name';
+    ni.onchange=commit;
+    noc.appendChild(ni); noc.addEventListener('mousedown',()=>select(p.id)); grid.appendChild(noc);
+    const nc=document.createElement('div'); nc.className='gc left name'; nc.dataset.pid=p.id;
     const nin=document.createElement('input'); nin.value=p.name;
     nin.oninput=()=>{p.name=nin.value; persist(); renderScope();};
-    nc.appendChild(nin); grid.appendChild(nc);
+    nin.onchange=commit;
+    nc.appendChild(nin); nc.addEventListener('mousedown',()=>select(p.id)); grid.appendChild(nc);
     for(let i=0;i<N;i++){
       const tc=document.createElement('div');
       tc.className='gc track'+(i%4===0?' q1start':'');
@@ -238,18 +295,19 @@ function placeBars(){
     const b=trackCellRect(p.id, clampQ(Math.max(p.start,p.end)));
     if(!a||!b) return;
     const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
-    const bar=document.createElement('div'); bar.className='bar';
+    const bar=document.createElement('div'); bar.className='bar'+(p.id===selId?' sel':''); bar.dataset.pid=p.id;
+    const col=effColor(p);
     const left=ra.left-gr.left, width=rb.right-ra.left, top=ra.top-gr.top;
     bar.style.left=left+'px'; bar.style.width=width+'px';
     bar.style.top=(top+4)+'px'; bar.style.height=(ra.height-8)+'px';
-    bar.style.background=`linear-gradient(180deg, ${shade(p.color,18)}, ${p.color})`;
+    bar.style.background=`linear-gradient(180deg, ${shade(col,18)}, ${col})`;
     const lbl=document.createElement('div'); lbl.className='lbl';
     lbl.textContent = p.name && width>70 ? p.name : '';
     bar.appendChild(lbl);
     const hl=document.createElement('div'); hl.className='handle l';
     const hr=document.createElement('div'); hr.className='handle r';
     bar.appendChild(hl); bar.appendChild(hr);
-    bar.ondblclick=(e)=>{e.stopPropagation(); p.start=p.end=null; persist(); placeBars();};
+    bar.ondblclick=(e)=>{e.stopPropagation(); p.start=p.end=null; commit(); redraw();};
     attachBarDrag(bar,hl,hr,p);
     ov.appendChild(bar);
   });
@@ -283,7 +341,7 @@ function shade(hex,p){
   return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
 }
 
-function createBarAt(p,q){ p.start=q; p.end=q; persist(); placeBars(); }
+function createBarAt(p,q){ select(p.id); p.start=q; p.end=q; commit(); redraw(); }
 
 function rowCellRects(phaseId){
   const arr=[];
@@ -297,16 +355,18 @@ function xToQ(rects,clientX){
   return 0;
 }
 function attachBarDrag(bar,hl,hr,p){
-  let mode=null, rects=null, grabOffset=0, origStart=0, origEnd=0;
+  let mode=null, rects=null, grabOffset=0, origStart=0, origEnd=0, moved=false;
   function down(e,m){
     e.preventDefault(); e.stopPropagation();
-    mode=m; rects=rowCellRects(p.id);
+    select(p.id);
+    mode=m; moved=false; rects=rowCellRects(p.id);
     origStart=Math.min(p.start,p.end); origEnd=Math.max(p.start,p.end);
     grabOffset = xToQ(rects, e.clientX) - origStart;
     window.addEventListener('pointermove',move);
     window.addEventListener('pointerup',up);
   }
   function move(e){
+    moved=true;
     const q=xToQ(rects,e.clientX);
     if(mode==='move'){
       const len=origEnd-origStart;
@@ -319,22 +379,91 @@ function attachBarDrag(bar,hl,hr,p){
     }
     placeBars();
   }
-  function up(){ mode=null; window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); persist(); }
+  function up(){ mode=null; window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved){ commit(); renderScope(); } }
   bar.addEventListener('pointerdown',e=>{ if(e.target===hl||e.target===hr)return; down(e,'move'); });
   hl.addEventListener('pointerdown',e=>down(e,'l'));
   hr.addEventListener('pointerdown',e=>down(e,'r'));
 }
 function attachMilestoneDrag(el,m){
-  let rects=null;
+  let rects=null, moved=false;
   function down(e){
-    e.preventDefault();
+    e.preventDefault(); moved=false;
     rects=state.phases.length?rowCellRects(state.phases[0].id):[];
     window.addEventListener('pointermove',move);
     window.addEventListener('pointerup',up);
   }
-  function move(e){ m.quarter=xToQ(rects,e.clientX); placeBars(); }
-  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); persist(); }
+  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); }
+  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved) commit(); }
   el.addEventListener('pointerdown',down);
+}
+
+/* =========================================================
+   SELECTION
+========================================================= */
+function select(id){ selId=id; refreshSel(); }
+function refreshSel(){
+  document.querySelectorAll('.bar').forEach(b=>b.classList.toggle('sel', b.dataset.pid===selId));
+  document.querySelectorAll('.scope').forEach(s=>s.classList.toggle('sel', s.dataset.pid===selId));
+}
+
+/* =========================================================
+   COMPANIES
+========================================================= */
+function pickCompanyColor(){
+  const used=state.companies.map(c=>c.color);
+  return COMPANY_PALETTE.find(c=>!used.includes(c)) || COMPANY_PALETTE[state.companies.length%COMPANY_PALETTE.length];
+}
+function addCompany(){
+  state.companies.push({id:uid(), name:'Company '+(state.companies.length+1), color:pickCompanyColor()});
+  commit(); renderAll();
+}
+function deleteCompany(cid){
+  state.companies = state.companies.filter(c=>c.id!==cid);
+  state.phases.forEach(p=>{ if(p.company===cid) p.company=null; });
+  commit(); renderAll();
+}
+function renderCompanies(){
+  const list=document.getElementById('companyList');
+  list.innerHTML='';
+  if(!state.companies.length){
+    const hint=document.createElement('div'); hint.className='cnt';
+    hint.textContent='No companies yet. Add one, pick a color, then assign it to phases below — matching bars turn that color.';
+    list.appendChild(hint); return;
+  }
+  state.companies.forEach(c=>{
+    const row=document.createElement('div'); row.className='company-row';
+    const col=document.createElement('input'); col.type='color'; col.value=c.color;
+    col.oninput=()=>{ c.color=col.value; persist(); placeBars(); renderScope(); renderLegend(); };
+    col.onchange=commit;
+    const nm=document.createElement('input'); nm.type='text'; nm.value=c.name; nm.placeholder='Company name';
+    nm.oninput=()=>{ c.name=nm.value; persist(); renderScope(); renderLegend(); };
+    nm.onchange=commit;
+    const cnt=document.createElement('span'); cnt.className='cnt';
+    const n=state.phases.filter(p=>p.company===c.id).length;
+    cnt.textContent=n+' phase'+(n===1?'':'s');
+    const del=document.createElement('button'); del.className='cdel'; del.textContent='Delete';
+    del.onclick=()=>deleteCompany(c.id);
+    row.appendChild(col); row.appendChild(nm); row.appendChild(cnt); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+function setPhaseCompany(pid,cid){ const p=phaseById(pid); if(!p)return; p.company=cid||null; commit(); redraw(); renderCompanies(); renderLegend(); }
+
+/* =========================================================
+   LEGEND
+========================================================= */
+function renderLegend(){
+  const lg=document.getElementById('legend'); if(!lg) return;
+  lg.innerHTML='';
+  const mk=(bg,txt)=>{ const s=document.createElement('span'); const i=document.createElement('i'); i.className='sw'; i.style.background=bg; s.appendChild(i); s.appendChild(document.createTextNode(' '+txt)); return s; };
+  if(state.companies.length){
+    state.companies.forEach(c=> lg.appendChild(mk(c.color, c.name||'(company)')));
+  } else {
+    lg.appendChild(mk('linear-gradient(180deg,#5A5AD6,#3333CC)','Phase duration'));
+  }
+  lg.appendChild(mk('#C00000','Delivery / milestone'));
+  const tip=document.createElement('span'); tip.textContent='Drag = move · Ends = resize · Double-click = clear bar';
+  lg.appendChild(tip);
 }
 
 /* =========================================================
@@ -343,42 +472,64 @@ function attachMilestoneDrag(el,m){
 function renderScope(){
   const list=document.getElementById('scopeList');
   list.innerHTML='';
-  state.phases.forEach(p=>{
-    const div=document.createElement('div'); div.className='scope';
+  state.phases.forEach((p,idx)=>{
+    const div=document.createElement('div'); div.className='scope'+(p.id===selId?' sel':''); div.dataset.pid=p.id;
+    div.addEventListener('mousedown',()=>select(p.id));
     const sh=document.createElement('div'); sh.className='sh';
-    const pno=document.createElement('span'); pno.className='pno'; pno.textContent=p.no; pno.style.background=p.color;
+    const pno=document.createElement('span'); pno.className='pno'; pno.textContent=p.no; pno.style.background=effColor(p);
     const pname=document.createElement('span'); pname.className='pname'; pname.textContent=p.name||'(unnamed)';
     const per=document.createElement('span'); per.className='per';
     per.textContent = (p.start!=null&&p.end!=null) ? qLabel(Math.min(p.start,p.end))+' ~ '+qLabel(Math.max(p.start,p.end)) : 'No period set';
-    const del=document.createElement('button'); del.textContent='Delete'; del.style.cssText='background:#eee;color:#c0392b;padding:3px 9px;font-size:11px;';
-    del.onclick=()=>{ if(confirm('Delete phase: '+(p.name||'(unnamed)')+'?')){ state.phases=state.phases.filter(x=>x.id!==p.id); persist(); renderAll(); } };
-    sh.appendChild(pno); sh.appendChild(pname); sh.appendChild(per); sh.appendChild(del);
+    // company selector
+    const sel=document.createElement('select'); sel.title='Assign company (color)';
+    const optNone=document.createElement('option'); optNone.value=''; optNone.textContent='— company —'; sel.appendChild(optNone);
+    state.companies.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name||'(company)'; if(p.company===c.id)o.selected=true; sel.appendChild(o); });
+    sel.onchange=()=>setPhaseCompany(p.id, sel.value);
+    // reorder + duplicate + delete
+    const up=document.createElement('button'); up.className='iconbtn'; up.textContent='↑'; up.title='Move up (Alt+↑)'; up.onclick=()=>movePhase(p.id,-1);
+    const dn=document.createElement('button'); dn.className='iconbtn'; dn.textContent='↓'; dn.title='Move down (Alt+↓)'; dn.onclick=()=>movePhase(p.id,1);
+    const dup=document.createElement('button'); dup.className='iconbtn'; dup.textContent='⧉'; dup.title='Duplicate (Ctrl+D)'; dup.onclick=()=>duplicatePhase(p.id);
+    const del=document.createElement('button'); del.className='cdel'; del.textContent='Delete'; del.title='Delete (Del)'; del.onclick=()=>deletePhase(p.id);
+    sh.appendChild(pno); sh.appendChild(pname); sh.appendChild(per); sh.appendChild(sel); sh.appendChild(up); sh.appendChild(dn); sh.appendChild(dup); sh.appendChild(del);
     const ta=document.createElement('textarea');
     ta.placeholder='Enter the work scope for this phase...';
     ta.value=p.scope||'';
     ta.oninput=()=>{ p.scope=ta.value; persist(); };
+    ta.onchange=commit;
     div.appendChild(sh); div.appendChild(ta);
     list.appendChild(div);
   });
+  refreshSel();
 }
 
 /* =========================================================
-   ACTIONS
+   PHASE ACTIONS
 ========================================================= */
-function renderAll(){
-  document.getElementById('title').value=state.title;
-  document.getElementById('startYear').value=state.startYear;
-  document.getElementById('numYears').value=state.numYears;
-  renderGrid(); renderScope();
-}
 function addPhase(){
   const n=state.phases.length;
-  state.phases.push({id:uid(), no:String(n), name:'New Phase', scope:'', start:0, end:1, color:COLORS[n%COLORS.length]});
-  persist(); renderAll();
+  const p={id:uid(), no:String(n), name:'New Phase', scope:'', start:0, end:1, color:COLORS[n%COLORS.length], company:null};
+  state.phases.push(p); select(p.id); commit(); renderAll();
+}
+function deletePhase(id){
+  const p=phaseById(id); if(!p) return;
+  state.phases=state.phases.filter(x=>x.id!==id);
+  if(selId===id) selId=null;
+  commit(); renderAll();
+}
+function duplicatePhase(id){
+  const i=state.phases.findIndex(p=>p.id===id); if(i<0) return;
+  const cp=clone(state.phases[i]); cp.id=uid(); cp.name=cp.name+' (copy)';
+  state.phases.splice(i+1,0,cp); select(cp.id); commit(); renderAll();
+}
+function movePhase(id,dir){
+  const i=state.phases.findIndex(p=>p.id===id); if(i<0) return;
+  const j=i+dir; if(j<0||j>=state.phases.length) return;
+  const t=state.phases[i]; state.phases[i]=state.phases[j]; state.phases[j]=t;
+  select(id); commit(); renderAll();
 }
 function addMilestone(){
   state.milestones.push({id:uid(), label:'Milestone', quarter:Math.floor(numQ()/2), color:'#C00000'});
-  persist(); placeBars();
+  commit(); placeBars();
 }
 function setYears(){
   const sy=parseInt(document.getElementById('startYear').value)||2026;
@@ -386,10 +537,43 @@ function setYears(){
   state.startYear=sy; state.numYears=ny;
   state.phases.forEach(p=>{ if(p.start!=null)p.start=clampQ(p.start); if(p.end!=null)p.end=clampQ(p.end); });
   state.milestones.forEach(m=>m.quarter=clampQ(m.quarter));
-  persist(); renderAll();
+  commit(); renderAll();
 }
-document.getElementById('title').addEventListener('input',e=>{state.title=e.target.value; persist();});
 
+/* =========================================================
+   RENDER ALL
+========================================================= */
+function redraw(){ placeBars(); renderScope(); renderLegend(); }
+function renderAll(){
+  document.getElementById('title').value=state.title;
+  document.getElementById('startYear').value=state.startYear;
+  document.getElementById('numYears').value=state.numYears;
+  renderGrid(); renderCompanies(); renderScope(); renderLegend(); updateHistUI();
+}
+const titleEl=document.getElementById('title');
+titleEl.addEventListener('input',e=>{state.title=e.target.value; persist();});
+titleEl.addEventListener('change',commit);
+
+/* =========================================================
+   KEYBOARD (Office-like)
+========================================================= */
+window.addEventListener('keydown',e=>{
+  const tag=(e.target.tagName||'').toLowerCase();
+  const editing = tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
+  const mod = e.ctrlKey||e.metaKey;
+  const k = e.key.toLowerCase();
+  if(mod && k==='z' && !e.shiftKey){ if(!editing){ e.preventDefault(); undo(); } return; }
+  if(mod && (k==='y' || (k==='z' && e.shiftKey))){ if(!editing){ e.preventDefault(); redo(); } return; }
+  if(mod && k==='d'){ if(selId && !editing){ e.preventDefault(); duplicatePhase(selId); } return; }
+  if((e.key==='Delete'||e.key==='Backspace') && !editing){ if(selId){ e.preventDefault(); deletePhase(selId); } return; }
+  if(e.altKey && e.key==='ArrowUp' && selId){ e.preventDefault(); movePhase(selId,-1); return; }
+  if(e.altKey && e.key==='ArrowDown' && selId){ e.preventDefault(); movePhase(selId,1); return; }
+  if(e.key==='Escape'){ selId=null; refreshSel(); }
+});
+
+/* =========================================================
+   SAVE / LOAD
+========================================================= */
 function fileBase(){ return (state.title||'schedule').replace(/[^\w가-힣\- ]/g,'').trim().replace(/\s+/g,'_')||'schedule'; }
 function saveJSON(){
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
@@ -400,17 +584,18 @@ function saveJSON(){
 function saveHTML(){
   // Build a self-contained HTML snapshot: full editor (incl. inlined PowerPoint engine)
   // with the CURRENT schedule baked in, so it opens showing exactly this state.
-  const clone = document.documentElement.cloneNode(true);
-  clone.querySelectorAll('#embedded-state').forEach(e=>e.remove());
-  const g = clone.querySelector('#gantt'); if(g) g.innerHTML='';
-  const sl = clone.querySelector('#scopeList'); if(sl) sl.innerHTML='';
+  const clone2 = document.documentElement.cloneNode(true);
+  clone2.querySelectorAll('#embedded-state').forEach(e=>e.remove());
+  const g = clone2.querySelector('#gantt'); if(g) g.innerHTML='';
+  const sl = clone2.querySelector('#scopeList'); if(sl) sl.innerHTML='';
+  const cl = clone2.querySelector('#companyList'); if(cl) cl.innerHTML='';
   const s = document.createElement('script');
   s.id = 'embedded-state';
   // escape "<" so embedded scope text can't break out of the script tag
   s.textContent = 'window.EMBEDDED_STATE=' + JSON.stringify(state).replace(/</g,'\\u003c') + ';';
-  const head = clone.querySelector('head');
+  const head = clone2.querySelector('head');
   head.insertBefore(s, head.firstChild);
-  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  const html = '<!DOCTYPE html>\n' + clone2.outerHTML;
   const blob = new Blob([html], {type:'text/html'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = fileBase()+'.html';
@@ -419,7 +604,7 @@ function saveHTML(){
 function loadJSON(ev){
   const f=ev.target.files[0]; if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{ try{ state=JSON.parse(r.result); persist(); renderAll(); }catch(e){ alert('Could not read the file: '+e.message); } };
+  r.onload=()=>{ try{ state=JSON.parse(r.result); selId=null; migrate(); initHistory(); renderAll(); }catch(e){ alert('Could not read the file: '+e.message); } };
   r.readAsText(f); ev.target.value='';
 }
 
@@ -465,9 +650,10 @@ function exportPPTX(){
     const row=[{text:p.no,options:{align:'center',valign:'middle',bold:true,fill:'F2F2F8'}},
                {text:p.name,options:{align:'left',valign:'middle',fontSize:10,fill:'F2F2F8'}}];
     const s=p.start==null?-1:Math.min(p.start,p.end), e=p.end==null?-2:Math.max(p.start,p.end);
+    const col=hx(effColor(p));
     for(let i=0;i<N;i++){
       const on = (i>=s && i<=e);
-      row.push({text:'',options:{fill: on?hx(p.color):EMPTY}});
+      row.push({text:'',options:{fill: on?col:EMPTY}});
     }
     rows.push(row);
   });
@@ -491,20 +677,23 @@ function exportPPTX(){
   const wsRows=[[
     {text:'No',options:{fill:HEADER,color:'FFFFFF',bold:true,align:'center'}},
     {text:'Phase',options:{fill:HEADER,color:'FFFFFF',bold:true}},
+    {text:'Company',options:{fill:HEADER,color:'FFFFFF',bold:true,align:'center'}},
     {text:'Period',options:{fill:HEADER,color:'FFFFFF',bold:true,align:'center'}},
     {text:'Work Scope',options:{fill:HEADER,color:'FFFFFF',bold:true}}
   ]];
   state.phases.forEach((p,idx)=>{
     const per=(p.start!=null&&p.end!=null)?qLabel(Math.min(p.start,p.end))+' ~ '+qLabel(Math.max(p.start,p.end)):'-';
     const fill = idx%2? 'F2F2F8':'FFFFFF';
+    const comp=p.company?companyById(p.company):null;
     wsRows.push([
-      {text:p.no,options:{align:'center',valign:'middle',bold:true,fill}},
+      {text:p.no,options:{align:'center',valign:'middle',bold:true,color:'FFFFFF',fill:hx(effColor(p))}},
       {text:p.name,options:{valign:'middle',fill}},
+      {text:comp?comp.name:'',options:{align:'center',valign:'middle',fontSize:9,bold:true,color:comp?hx(comp.color):'666666',fill}},
       {text:per,options:{align:'center',valign:'middle',fontSize:9,fill}},
       {text:p.scope||'',options:{valign:'middle',fontSize:10,fill}}
     ]);
   });
-  s2.addTable(wsRows,{x:0.3,y:0.8,w:12.7,colW:[0.5,2.8,1.7,7.7],border:{type:'solid',pt:0.5,color:'CCCCCC'},
+  s2.addTable(wsRows,{x:0.3,y:0.8,w:12.7,colW:[0.5,2.6,1.7,1.5,6.4],border:{type:'solid',pt:0.5,color:'CCCCCC'},
     valign:'middle',fontFace:'Arial',fontSize:10,autoPage:true,autoPageRepeatHeader:true,autoPageHeaderRows:1,
     autoPageSlideStartY:0.8});
 
@@ -517,6 +706,8 @@ function exportPPTX(){
 ========================================================= */
 if (window.EMBEDDED_STATE) { state = window.EMBEDDED_STATE; }
 else { restore(); }
+migrate();
+initHistory();
 renderAll();
 </script>
 <script>

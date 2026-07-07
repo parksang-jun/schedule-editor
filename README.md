@@ -41,9 +41,22 @@ pyinstaller --onefile --name ScheduleEditor --add-data "Schedule_Editor_EN.html;
 ## 주요 기능 / Features
 
 - 드래그로 편집하는 분기별 Gantt 차트 (연도/분기 수 조절 가능)
+- **Undo / Redo** (`Ctrl+Z` / `Ctrl+Y`), 단계 복제 (`Ctrl+D`), 순서 이동 (`Alt+↑/↓`)
+- 막대를 클릭해 선택 후 **`Delete` 키로 삭제**
+- **회사(기관)별 색상 지정** — 회사 목록(이름+색)을 만들고 각 단계에 지정하면 해당 막대가 그 색으로 표시
 - 단계 추가/삭제·이름 편집, 납기/마일스톤 마커
 - 단계별 Work Scope 상세 입력
-- PowerPoint(.pptx) 내보내기 (2슬라이드: Gantt + Work Scope)
+- PowerPoint(.pptx) 내보내기 (Gantt + Work Scope, 회사 색상·이름 포함)
 - 인쇄/PDF 시 막대 색상 그대로 출력 (landscape)
 - 자체 완결형 HTML 스냅샷 저장 / JSON 저장·불러오기
 - 완전 오프라인 (외부 의존성 없음)
+
+### 키보드 단축키 / Keyboard shortcuts
+
+| 단축키 | 동작 |
+|--------|------|
+| `Ctrl+Z` / `Ctrl+Y` | 실행취소 / 다시실행 (Undo / Redo) |
+| `Delete` | 선택한 단계 삭제 |
+| `Ctrl+D` | 선택한 단계 복제 |
+| `Alt+↑` / `Alt+↓` | 단계 순서 위/아래로 이동 |
+| `Esc` | 선택 해제 |
