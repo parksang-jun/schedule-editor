@@ -1,0 +1,14 @@
+# PyInstaller build artifacts
+build/
+dist/
+build_exe/
+dist_exe/
+__pycache__/
+*.spec
+
+# Built binaries (regenerate with PyInstaller)
+*.exe
+
+# Local exports / temp
+*.pdf
+*.zip
