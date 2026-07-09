@@ -61,6 +61,9 @@
   .milestone{position:absolute;width:0;border-left:2px dashed var(--red);pointer-events:auto;cursor:ew-resize;z-index:5;}
   .milestone .flag{position:absolute;top:-2px;left:3px;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:0 4px 4px 0;white-space:nowrap;}
   .milestone .tri{position:absolute;bottom:-1px;left:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid var(--red);}
+  .revision{position:absolute;width:0;border-left:2px solid #1B6FC0;pointer-events:auto;cursor:ew-resize;z-index:5;}
+  .revision .flag{position:absolute;bottom:-2px;left:3px;background:#1B6FC0;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px 4px 4px 0;white-space:nowrap;}
+  .revision .rtri{position:absolute;top:-1px;left:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid #1B6FC0;}
 
   /* COMPANIES */
   .company-list{display:flex;flex-direction:column;gap:8px;}
@@ -150,6 +153,12 @@
   </div>
 
   <div class="card">
+    <h2><span class="badge">REVISIONS</span> 개정선 · 세로 실선 (Revision)</h2>
+    <div class="company-list" id="revisionList"></div>
+    <button class="ghost" style="margin-top:12px;background:#e6e6f2;color:#3a3a5c" onclick="addRevision()">＋ 개정선 추가</button>
+  </div>
+
+  <div class="card">
     <h2><span class="badge">WORK SCOPE</span> 작업별 Work Scope</h2>
     <div class="scope-list" id="scopeList"></div>
   </div>
@@ -204,6 +213,7 @@ function defaultState(){
       {id:uid(), label:'ARA de-risking (T0+21)', quarter:27, color:'#C00000'},
       {id:uid(), label:'Delivery (T3/T4+12)',    quarter:50, color:'#C00000'},
     ],
+    revisions:[],
   };
 }
 let state = defaultState();
@@ -216,6 +226,7 @@ function migrate(){
   if(!Array.isArray(state.companies)) state.companies=[];
   if(!Array.isArray(state.phases)) state.phases=[];
   if(!Array.isArray(state.milestones)) state.milestones=[];
+  if(!Array.isArray(state.revisions)) state.revisions=[];
   if(state.unit!=='month'&&state.unit!=='quarter') state.unit='quarter';
   state.phases.forEach(p=>{ if(!p.id)p.id=uid(); if(!('company' in p))p.company=null; if(!('color' in p))p.color=COLORS[0]; });
 }
@@ -265,9 +276,11 @@ function setUnit(u){
     }
   });
   state.milestones.forEach(m=>{ m.quarter = toMonth ? m.quarter*3 : Math.floor(m.quarter/3); });
+  (state.revisions||[]).forEach(r=>{ r.quarter = toMonth ? r.quarter*3 : Math.floor(r.quarter/3); });
   state.unit=u;
   state.phases.forEach(p=>{ if(p.start!=null)p.start=clampU(p.start); if(p.end!=null)p.end=clampU(p.end); });
   state.milestones.forEach(m=>m.quarter=clampU(m.quarter));
+  (state.revisions||[]).forEach(r=>r.quarter=clampU(r.quarter));
   commit(); renderAll();
 }
 
@@ -372,7 +385,29 @@ function placeBars(){
     flag.textContent=m.label+' ('+uLabel(q)+')';
     const tri=document.createElement('div'); tri.className='tri'; tri.style.borderBottomColor=m.color;
     el.appendChild(flag); el.appendChild(tri);
-    attachMilestoneDrag(el,m);
+    attachMarkerDrag(el,m,renderMilestones);
+    ov.appendChild(el);
+  });
+
+  (state.revisions||[]).forEach(rv=>{
+    const q=clampU(rv.quarter);
+    const c=state.phases.length?trackCellRect(state.phases[0].id, q):null;
+    let xRight;
+    if(c){ const rc=c.getBoundingClientRect(); xRight=rc.right-gr.left; }
+    else { xRight=352+(q+1)*26; }
+    const firstRow=state.phases[0]?trackCellRect(state.phases[0].id,0):null;
+    const lastP=state.phases[state.phases.length-1];
+    const lastRow=lastP?trackCellRect(lastP.id,0):null;
+    const topAll = firstRow? firstRow.getBoundingClientRect().top-gr.top : 0;
+    const botAll = lastRow? lastRow.getBoundingClientRect().bottom-gr.top : g.scrollHeight;
+    const el=document.createElement('div'); el.className='revision';
+    el.style.left=(xRight-1)+'px'; el.style.top=topAll+'px'; el.style.height=(botAll-topAll)+'px';
+    el.style.borderColor=rv.color;
+    const flag=document.createElement('div'); flag.className='flag'; flag.style.background=rv.color;
+    flag.textContent=rv.label+' ('+uLabel(q)+')';
+    const tri=document.createElement('div'); tri.className='rtri'; tri.style.borderBottomColor=rv.color;
+    el.appendChild(flag); el.appendChild(tri);
+    attachMarkerDrag(el,rv,renderRevisions);
     ov.appendChild(el);
   });
 }
@@ -423,7 +458,7 @@ function attachBarDrag(bar,hl,hr,p){
   hl.addEventListener('pointerdown',e=>down(e,'l'));
   hr.addEventListener('pointerdown',e=>down(e,'r'));
 }
-function attachMilestoneDrag(el,m){
+function attachMarkerDrag(el,m,refresh){
   let rects=null, moved=false;
   function down(e){
     e.preventDefault(); moved=false;
@@ -431,8 +466,8 @@ function attachMilestoneDrag(el,m){
     window.addEventListener('pointermove',move);
     window.addEventListener('pointerup',up);
   }
-  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); renderMilestones(); }
-  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved){ commit(); renderMilestones(); } }
+  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); if(refresh)refresh(); }
+  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved){ commit(); if(refresh)refresh(); } }
   el.addEventListener('pointerdown',down);
 }
 
@@ -459,6 +494,36 @@ function renderMilestones(){
     row.appendChild(col); row.appendChild(nm); row.appendChild(dt); row.appendChild(del);
     list.appendChild(row);
   });
+}
+
+/* =========================================================
+   REVISION LINES (vertical revision markers)
+========================================================= */
+function renderRevisions(){
+  const list=document.getElementById('revisionList'); if(!list) return;
+  list.innerHTML='';
+  if(!state.revisions || !state.revisions.length){
+    const hint=document.createElement('div'); hint.className='cnt';
+    hint.textContent='개정선이 없습니다. 추가하면 설계변경·개정 시점을 세로 실선으로 표시합니다. 라벨을 편집하거나 차트에서 선을 드래그해 위치를 바꾸세요.';
+    list.appendChild(hint); return;
+  }
+  state.revisions.forEach(rv=>{
+    const row=document.createElement('div'); row.className='company-row';
+    const col=document.createElement('input'); col.type='color'; col.value=rv.color||'#1B6FC0';
+    col.oninput=()=>{ rv.color=col.value; persist(); placeBars(); }; col.onchange=commit;
+    const nm=document.createElement('input'); nm.type='text'; nm.value=rv.label; nm.placeholder='개정 라벨 (예: Rev.1)';
+    nm.oninput=()=>{ rv.label=nm.value; persist(); placeBars(); }; nm.onchange=commit;
+    const dt=document.createElement('span'); dt.className='cnt'; dt.textContent=uLabel(clampU(rv.quarter));
+    const del=document.createElement('button'); del.className='cdel'; del.textContent='삭제';
+    del.onclick=()=>{ state.revisions=state.revisions.filter(x=>x.id!==rv.id); commit(); renderRevisions(); placeBars(); };
+    row.appendChild(col); row.appendChild(nm); row.appendChild(dt); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+function addRevision(){
+  if(!Array.isArray(state.revisions)) state.revisions=[];
+  state.revisions.push({id:uid(), label:'Rev.'+(state.revisions.length+1), quarter:Math.floor(numU()/2), color:'#1B6FC0'});
+  commit(); renderRevisions(); placeBars();
 }
 
 /* =========================================================
@@ -606,7 +671,7 @@ function renderAll(){
   document.getElementById('startYear').value=state.startYear;
   document.getElementById('numYears').value=state.numYears;
   document.getElementById('unitSel').value=state.unit;
-  renderGrid(); renderCompanies(); renderMilestones(); renderScope(); renderLegend(); updateHistUI();
+  renderGrid(); renderCompanies(); renderMilestones(); renderRevisions(); renderScope(); renderLegend(); updateHistUI();
 }
 const titleEl=document.getElementById('title');
 titleEl.addEventListener('input',e=>{state.title=e.target.value; persist();});
@@ -644,6 +709,7 @@ function saveHTML(){
   const g = clone2.querySelector('#gantt'); if(g) g.innerHTML='';
   const sl = clone2.querySelector('#scopeList'); if(sl) sl.innerHTML='';
   const cl = clone2.querySelector('#companyList'); if(cl) cl.innerHTML='';
+  ['#milestoneList','#revisionList'].forEach(id=>{ const e=clone2.querySelector(id); if(e) e.innerHTML=''; });
   const s = document.createElement('script'); s.id = 'embedded-state';
   // escape "<" so embedded scope text can't break out of the script tag
   s.textContent = 'window.EMBEDDED_STATE=' + JSON.stringify(state).replace(/</g,'\\u003c') + ';';
