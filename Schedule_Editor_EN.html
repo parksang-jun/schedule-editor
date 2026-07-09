@@ -81,6 +81,7 @@
   .scope .sh .pname{font-weight:600;font-size:13px;flex:1;min-width:80px;}
   .scope .sh .per{font-size:11px;color:var(--muted);}
   .scope .sh select{font-size:11px;border:1px solid var(--line);border-radius:5px;padding:3px 4px;max-width:150px;font-family:inherit;background:#fff;}
+  .scope .sh input[type=color].barcolor{width:26px;height:24px;border:1px solid var(--line);border-radius:5px;padding:0;background:none;cursor:pointer;}
   .scope .sh .iconbtn{background:#e2e2ee;color:#3a3a5c;font-size:12px;padding:3px 7px;line-height:1;}
   .scope .sh .iconbtn:hover{background:#d0d0e2;}
   .scope .sh .cdel{background:#eee;color:#c0392b;font-size:11px;padding:3px 9px;}
@@ -303,7 +304,7 @@ function renderGrid(){
       const tc=document.createElement('div');
       tc.className='gc track'+(i%upy===0?' ystart':'');
       tc.dataset.phase=p.id; tc.dataset.q=i;
-      tc.onclick=(e)=>{ if(e.target.closest('.bar'))return; createBarAt(p,i); };
+      tc.onclick=(e)=>{ if(e.target.closest('.bar'))return; select(p.id); if(p.start==null||p.end==null) createBarAt(p,i); };
       grid.appendChild(tc);
     }
   });
@@ -344,7 +345,6 @@ function placeBars(){
     const hl=document.createElement('div'); hl.className='handle l';
     const hr=document.createElement('div'); hr.className='handle r';
     bar.appendChild(hl); bar.appendChild(hr);
-    bar.ondblclick=(e)=>{e.stopPropagation(); p.start=p.end=null; commit(); redraw();};
     attachBarDrag(bar,hl,hr,p);
     ov.appendChild(bar);
   });
@@ -490,7 +490,7 @@ function renderLegend(){
   if(state.companies.length){ state.companies.forEach(c=> lg.appendChild(mk(c.color, c.name||'(company)'))); }
   else { lg.appendChild(mk('linear-gradient(180deg,#5A5AD6,#3333CC)','Task duration')); }
   lg.appendChild(mk('#C00000','Delivery / milestone'));
-  const tip=document.createElement('span'); tip.textContent='Drag = move · Ends = resize · Double-click = clear bar';
+  const tip=document.createElement('span'); tip.textContent='Drag = move · Ends = resize';
   lg.appendChild(tip);
 }
 
@@ -512,11 +512,14 @@ function renderScope(){
     const optNone=document.createElement('option'); optNone.value=''; optNone.textContent='— company —'; sel.appendChild(optNone);
     state.companies.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name||'(company)'; if(p.company===c.id)o.selected=true; sel.appendChild(o); });
     sel.onchange=()=>setPhaseCompany(p.id, sel.value);
+    const colr=document.createElement('input'); colr.type='color'; colr.className='barcolor'; colr.title='Bar color (clears company)'; colr.value=effColor(p);
+    colr.oninput=()=>{ p.color=colr.value; p.company=null; persist(); redraw(); renderCompanies(); };
+    colr.onchange=commit;
     const up=document.createElement('button'); up.className='iconbtn'; up.textContent='↑'; up.title='Move up (Alt+↑)'; up.onclick=()=>movePhase(p.id,-1);
     const dn=document.createElement('button'); dn.className='iconbtn'; dn.textContent='↓'; dn.title='Move down (Alt+↓)'; dn.onclick=()=>movePhase(p.id,1);
     const dup=document.createElement('button'); dup.className='iconbtn'; dup.textContent='⧉'; dup.title='Duplicate (Ctrl+D)'; dup.onclick=()=>duplicatePhase(p.id);
     const del=document.createElement('button'); del.className='cdel'; del.textContent='Delete'; del.title='Delete (Del)'; del.onclick=()=>deletePhase(p.id);
-    sh.appendChild(pno); sh.appendChild(pname); sh.appendChild(per); sh.appendChild(sel); sh.appendChild(up); sh.appendChild(dn); sh.appendChild(dup); sh.appendChild(del);
+    sh.appendChild(pno); sh.appendChild(pname); sh.appendChild(per); sh.appendChild(sel); sh.appendChild(colr); sh.appendChild(up); sh.appendChild(dn); sh.appendChild(dup); sh.appendChild(del);
     const ta=document.createElement('textarea');
     ta.placeholder='Enter the work scope for this task...';
     ta.value=p.scope||''; ta.oninput=()=>{ p.scope=ta.value; persist(); }; ta.onchange=commit;
