@@ -115,6 +115,7 @@
   <button class="ghost" onclick="saveJSON()">💾 저장(JSON)</button>
   <button class="ghost" onclick="document.getElementById('loadfile').click()">📂 불러오기</button>
   <input type="file" id="loadfile" accept="application/json,.json" style="display:none" onchange="loadJSON(event)">
+  <button class="ghost" onclick="resetDefault()" title="기본 스케쥴로 복원">↺ 기본값 복원</button>
   <button class="ghost" onclick="window.print()">🖨️ 인쇄/PDF</button>
   <button class="primary" onclick="exportPPTX()">📊 PowerPoint 내보내기</button>
 </header>
@@ -156,6 +157,7 @@
 ========================================================= */
 const COLORS = ['#3333CC','#2E8B57','#B8860B','#8E44AD','#C0392B','#16A085','#D35400'];
 const COMPANY_PALETTE = ['#2E86AB','#2A9D8F','#E9A23B','#C0392B','#8E44AD','#16A085','#D35400','#1B3A5B','#B8860B','#2E8B57'];
+const DEFAULT_VERSION = 4; /* bump when the shipped default schedule changes */
 function uid(){return 'id'+Math.random().toString(36).slice(2,9);}
 
 /* ICI-WLD project — Scope of Work & Deliverables (THERMOCOAX / DOOSAN / KEPCO E&C).
@@ -165,6 +167,7 @@ function defaultState(){
   const THX='cthx', DOO='cdoo', KEP='ckep';
   const P=(no,name,start,end,company)=>({id:uid(),no,name,scope:'',start,end,color:'#2E86AB',company});
   return {
+    version:DEFAULT_VERSION,
     title:'ICI-WLD Project Schedule (Scope of Work & Deliverables)',
     startYear:2026, numYears:5, unit:'month',
     companies:[
@@ -173,27 +176,27 @@ function defaultState(){
       {id:KEP,name:'KEPCO E&C',color:'#2A9D8F'},
     ],
     phases:[
-      P('0','Design spec review & Conformity Matrix (T0+1)',        5,  6,  THX),
-      P('0','ICI & WLD design drawings + extension cables (T0+4)',  6,  9,  THX),
-      P('0','Mock-up drawings for shock test (T0+6)',               9,  11,  THX),
-      P('0','De-risking test procedures / ATP (T0+7)',             11, 12,  THX),
-      P('0','Insertion test & mock-up EOMR (T0+15)',              12, 20,  THX),
-      P('0','EQ mock-up DWG / documentation — after ARA (T0+18)', 20, 23,  THX),
-      P('0','De-risking tests: Vib/Shock/EMC/Temp, incl. MIL (T0+21)',20,26, THX),
-      P('1','EQ mock-up DWG / MQP / ATP (T1+1)',                  23, 24,  THX),
-      P('1','ICI & WLD EQ mock-up EOMR (T1+5)',                   24, 28,  THX),
-      P('1','EQ program writing + documentation (T1+5)',          24, 28,  THX),
-      P('1','Final detailed design per DOOSAN QAP + approval (T1+5)',24,28, THX),
-      P('2','EQ program management ICI & WLD → EQ report (T1+13)', 29, 36,  DOO),
-      P('3','LLT material procurement — long-lead (T2+12)',        29, 41,  DOO),
-      P('3','Production docs + first-off ICI/WLD manufacture (T3+2)',38,40, DOO),
-      P('3','Production 18u ICI & 8/9u WLD for ARA (T3+12)',       40, 49,  DOO),
-      P('3','ICI/WLD extension cables DWG/PQR/ATP (T4+2)',         38, 40,  KEP),
-      P('3','ICI/WLD extension cables production / EOMR (T4+12)',  40, 49,  KEP),
+      P('0','Design spec review & Conformity Matrix (T0+1)',        6,  7,  THX),
+      P('0','ICI & WLD design drawings + extension cables (T0+4)',  7,  10,  THX),
+      P('0','Mock-up drawings for shock test (T0+6)',               10,  12,  THX),
+      P('0','De-risking test procedures / ATP (T0+7)',             12, 13,  THX),
+      P('0','Insertion test & mock-up EOMR (T0+15)',              13, 21,  THX),
+      P('0','EQ mock-up DWG / documentation — after ARA (T0+18)', 21, 24,  THX),
+      P('0','De-risking tests: Vib/Shock/EMC/Temp, incl. MIL (T0+21)',21,27, THX),
+      P('1','EQ mock-up DWG / MQP / ATP (T1+1)',                  24, 25,  THX),
+      P('1','ICI & WLD EQ mock-up EOMR (T1+5)',                   25, 29,  THX),
+      P('1','EQ program writing + documentation (T1+5)',          25, 29,  THX),
+      P('1','Final detailed design per DOOSAN QAP + approval (T1+5)',25,29, THX),
+      P('2','EQ program management ICI & WLD → EQ report (T1+13)', 30, 37,  DOO),
+      P('3','LLT material procurement — long-lead (T2+12)',        30, 42,  DOO),
+      P('3','Production docs + first-off ICI/WLD manufacture (T3+2)',39,41, DOO),
+      P('3','Production 18u ICI & 8/9u WLD for ARA (T3+12)',       41, 50,  DOO),
+      P('3','ICI/WLD extension cables DWG/PQR/ATP (T4+2)',         39, 41,  KEP),
+      P('3','ICI/WLD extension cables production / EOMR (T4+12)',  41, 50,  KEP),
     ],
     milestones:[
-      {id:uid(), label:'ARA de-risking (T0+21)', quarter:26, color:'#C00000'},
-      {id:uid(), label:'Delivery (T3/T4+12)',    quarter:49, color:'#C00000'},
+      {id:uid(), label:'ARA de-risking (T0+21)', quarter:27, color:'#C00000'},
+      {id:uid(), label:'Delivery (T3/T4+12)',    quarter:50, color:'#C00000'},
     ],
   };
 }
@@ -617,6 +620,10 @@ function saveHTML(){
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = fileBase()+'.html'; a.click();
 }
+function resetDefault(){
+  if(!confirm('기본 ICI-WLD 스케쥴로 복원할까요? 현재 편집기의 변경 내용이 대체됩니다.')) return;
+  state=defaultState(); selId=null; migrate(); initHistory(); persist(); renderAll();
+}
 function loadJSON(ev){
   const f=ev.target.files[0]; if(!f)return;
   const r=new FileReader();
@@ -715,7 +722,11 @@ function exportPPTX(){
    INIT
 ========================================================= */
 if (window.EMBEDDED_STATE) { state = window.EMBEDDED_STATE; }
-else { restore(); }
+else {
+  restore();
+  // If the locally-saved copy predates the current shipped schedule, load the new default.
+  if (!state || (state.version||0) < DEFAULT_VERSION) { state = defaultState(); }
+}
 migrate();
 initHistory();
 renderAll();
