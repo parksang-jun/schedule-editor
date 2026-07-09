@@ -144,9 +144,14 @@
   </div>
 
   <div class="card">
+    <h2><span class="badge">MILESTONES</span> Milestones — dashed lines (납기 · 마일스톤)</h2>
+    <div class="company-list" id="milestoneList"></div>
+    <button class="ghost" style="margin-top:12px;background:#e6e6f2;color:#3a3a5c" onclick="addMilestone()">＋ Add delivery / milestone</button>
+  </div>
+
+  <div class="card">
     <h2><span class="badge">WORK SCOPE</span> Work Scope by Task</h2>
     <div class="scope-list" id="scopeList"></div>
-    <button class="ghost" style="margin-top:12px;background:#e6e6f2;color:#3a3a5c" onclick="addMilestone()">＋ Add delivery / milestone</button>
   </div>
 
   <div class="footer">Standalone offline file · No internet required · Your work is not auto-saved to a file — back up with <b>💾 Save (JSON)</b>.</div>
@@ -426,9 +431,34 @@ function attachMilestoneDrag(el,m){
     window.addEventListener('pointermove',move);
     window.addEventListener('pointerup',up);
   }
-  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); }
-  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved) commit(); }
+  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); renderMilestones(); }
+  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved){ commit(); renderMilestones(); } }
   el.addEventListener('pointerdown',down);
+}
+
+/* =========================================================
+   MILESTONES PANEL (edit the dashed-line labels)
+========================================================= */
+function renderMilestones(){
+  const list=document.getElementById('milestoneList'); if(!list) return;
+  list.innerHTML='';
+  if(!state.milestones.length){
+    const hint=document.createElement('div'); hint.className='cnt';
+    hint.textContent='No milestones. Add one, then edit its label — it shows on a red dashed line. Drag the line on the chart to move it.';
+    list.appendChild(hint); return;
+  }
+  state.milestones.forEach(m=>{
+    const row=document.createElement('div'); row.className='company-row';
+    const col=document.createElement('input'); col.type='color'; col.value=m.color||'#C00000';
+    col.oninput=()=>{ m.color=col.value; persist(); placeBars(); }; col.onchange=commit;
+    const nm=document.createElement('input'); nm.type='text'; nm.value=m.label; nm.placeholder='Milestone label';
+    nm.oninput=()=>{ m.label=nm.value; persist(); placeBars(); }; nm.onchange=commit;
+    const dt=document.createElement('span'); dt.className='cnt'; dt.textContent=uLabel(clampU(m.quarter));
+    const del=document.createElement('button'); del.className='cdel'; del.textContent='Delete';
+    del.onclick=()=>{ state.milestones=state.milestones.filter(x=>x.id!==m.id); commit(); renderMilestones(); placeBars(); };
+    row.appendChild(col); row.appendChild(nm); row.appendChild(dt); row.appendChild(del);
+    list.appendChild(row);
+  });
 }
 
 /* =========================================================
@@ -556,7 +586,7 @@ function movePhase(id,dir){
 }
 function addMilestone(){
   state.milestones.push({id:uid(), label:'Milestone', quarter:Math.floor(numU()/2), color:'#C00000'});
-  commit(); placeBars();
+  commit(); renderMilestones(); placeBars();
 }
 function setYears(){
   const sy=parseInt(document.getElementById('startYear').value)||2026;
@@ -576,7 +606,7 @@ function renderAll(){
   document.getElementById('startYear').value=state.startYear;
   document.getElementById('numYears').value=state.numYears;
   document.getElementById('unitSel').value=state.unit;
-  renderGrid(); renderCompanies(); renderScope(); renderLegend(); updateHistUI();
+  renderGrid(); renderCompanies(); renderMilestones(); renderScope(); renderLegend(); updateHistUI();
 }
 const titleEl=document.getElementById('title');
 titleEl.addEventListener('input',e=>{state.title=e.target.value; persist();});

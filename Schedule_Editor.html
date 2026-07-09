@@ -144,9 +144,14 @@
   </div>
 
   <div class="card">
+    <h2><span class="badge">MILESTONES</span> 마일스톤 · 점선 라인 (납기)</h2>
+    <div class="company-list" id="milestoneList"></div>
+    <button class="ghost" style="margin-top:12px;background:#e6e6f2;color:#3a3a5c" onclick="addMilestone()">＋ 납기/마일스톤 추가</button>
+  </div>
+
+  <div class="card">
     <h2><span class="badge">WORK SCOPE</span> 작업별 Work Scope</h2>
     <div class="scope-list" id="scopeList"></div>
-    <button class="ghost" style="margin-top:12px;background:#e6e6f2;color:#3a3a5c" onclick="addMilestone()">＋ 납기/마일스톤 추가</button>
   </div>
 
   <div class="footer">오프라인 단독 실행 파일 · 인터넷 불필요 · 자동 저장되지 않으니 <b>💾 저장(JSON)</b>으로 백업하세요.</div>
@@ -426,9 +431,34 @@ function attachMilestoneDrag(el,m){
     window.addEventListener('pointermove',move);
     window.addEventListener('pointerup',up);
   }
-  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); }
-  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved) commit(); }
+  function move(e){ moved=true; m.quarter=xToQ(rects,e.clientX); placeBars(); renderMilestones(); }
+  function up(){ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); if(moved){ commit(); renderMilestones(); } }
   el.addEventListener('pointerdown',down);
+}
+
+/* =========================================================
+   MILESTONES PANEL (edit the dashed-line labels)
+========================================================= */
+function renderMilestones(){
+  const list=document.getElementById('milestoneList'); if(!list) return;
+  list.innerHTML='';
+  if(!state.milestones.length){
+    const hint=document.createElement('div'); hint.className='cnt';
+    hint.textContent='마일스톤이 없습니다. 추가한 뒤 라벨을 편집하세요 — 빨간 점선에 표시됩니다. 차트에서 선을 드래그하면 위치가 바뀝니다.';
+    list.appendChild(hint); return;
+  }
+  state.milestones.forEach(m=>{
+    const row=document.createElement('div'); row.className='company-row';
+    const col=document.createElement('input'); col.type='color'; col.value=m.color||'#C00000';
+    col.oninput=()=>{ m.color=col.value; persist(); placeBars(); }; col.onchange=commit;
+    const nm=document.createElement('input'); nm.type='text'; nm.value=m.label; nm.placeholder='마일스톤 라벨';
+    nm.oninput=()=>{ m.label=nm.value; persist(); placeBars(); }; nm.onchange=commit;
+    const dt=document.createElement('span'); dt.className='cnt'; dt.textContent=uLabel(clampU(m.quarter));
+    const del=document.createElement('button'); del.className='cdel'; del.textContent='삭제';
+    del.onclick=()=>{ state.milestones=state.milestones.filter(x=>x.id!==m.id); commit(); renderMilestones(); placeBars(); };
+    row.appendChild(col); row.appendChild(nm); row.appendChild(dt); row.appendChild(del);
+    list.appendChild(row);
+  });
 }
 
 /* =========================================================
@@ -556,7 +586,7 @@ function movePhase(id,dir){
 }
 function addMilestone(){
   state.milestones.push({id:uid(), label:'Milestone', quarter:Math.floor(numU()/2), color:'#C00000'});
-  commit(); placeBars();
+  commit(); renderMilestones(); placeBars();
 }
 function setYears(){
   const sy=parseInt(document.getElementById('startYear').value)||2026;
@@ -576,7 +606,7 @@ function renderAll(){
   document.getElementById('startYear').value=state.startYear;
   document.getElementById('numYears').value=state.numYears;
   document.getElementById('unitSel').value=state.unit;
-  renderGrid(); renderCompanies(); renderScope(); renderLegend(); updateHistUI();
+  renderGrid(); renderCompanies(); renderMilestones(); renderScope(); renderLegend(); updateHistUI();
 }
 const titleEl=document.getElementById('title');
 titleEl.addEventListener('input',e=>{state.title=e.target.value; persist();});
