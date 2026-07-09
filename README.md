@@ -40,7 +40,7 @@ pyinstaller --onefile --name ScheduleEditor --add-data "Schedule_Editor_EN.html;
 
 ## 주요 기능 / Features
 
-- 드래그로 편집하는 분기별 Gantt 차트 (연도/분기 수 조절 가능)
+- 드래그로 편집하는 Gantt 차트 — **분기(Quarter) / 월(Month) 단위 보기 전환** (연도 수 조절 가능)
 - **Undo / Redo** (`Ctrl+Z` / `Ctrl+Y`), 단계 복제 (`Ctrl+D`), 순서 이동 (`Alt+↑/↓`)
 - 막대를 클릭해 선택 후 **`Delete` 키로 삭제**
 - **회사(기관)별 색상 지정** — 회사 목록(이름+색)을 만들고 각 단계에 지정하면 해당 막대가 그 색으로 표시
